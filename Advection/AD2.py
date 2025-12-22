@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import scipy
 import time
 from scipy import io
-from RF import *
 from matplotlib import cm
+from RF import *
 
 # Write a function to get the training and test samples
 
@@ -47,10 +47,10 @@ class Cholesky_Regression:
 
     def predict(self, X):
         return X @ self.coef_
-    
+
 # read training data and test data
-x_train, y_train, xt= get_data("train_AD1.npz")
-x_test, y_test, xt = get_data("test_AD1.npz")
+x_train, y_train, xt= get_data("train_AD2.npz")
+x_test, y_test, xt = get_data("test_AD2.npz")
 
 print('Training Input Shape: ' + str(x_train.shape))
 print('Training Output Shape: ' + str(y_train.shape))
@@ -80,7 +80,7 @@ y_train_noise = y_noise[0:y_train.shape[0]]
 print('Added noise to data \n')
 
 # Save data to text file
-with open('AD1_data_noise.txt','w') as f:
+with open('AD2_data_noise.txt','w') as f:
     np.savetxt(f, x_train_noise, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_test_noise, delimiter=',')
@@ -97,21 +97,21 @@ idx = 20
 
 # one example of training input
 plt.figure()
-plt.plot(grid, x_train_noise[idx], color = cm.coolwarm(0.0), linewidth=1.5)
+plt.plot(grid, x_train_noise[idx], color = cm.coolwarm(0.0), linewidth=2)
 plt.xlabel(r'$x$', size=25)
 plt.ylabel(r'$u(x) = v(x,0)$', size=25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1], fontsize=20)
-plt.savefig('AD1_input.png', bbox_inches = 'tight')
+plt.yticks([0,1,2], fontsize=20)
+plt.savefig('AD2_input.png', bbox_inches = 'tight')
 
 # one example of training output
 plt.figure()
-plt.plot(grid, y_train_noise[idx], color = cm.coolwarm(0.0), linewidth=1.5)
+plt.plot(grid, y_train_noise[idx], color = cm.coolwarm(0.0), linewidth=2)
 plt.xlabel(r'$x$', size=25)
 plt.ylabel(r'$v(x,0.5)$', size=25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1], fontsize=20)
-plt.savefig('AD1_output.png', bbox_inches = 'tight')
+plt.yticks([0,1,2], fontsize=20)
+plt.savefig('AD2_output.png', bbox_inches = 'tight')
 
 num = 20
 
@@ -171,7 +171,7 @@ print(f'Average test error of regularized Gaussian random feature model with \u0
 print(f'Average clock time is {np.mean(times_reg1):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Gaussian.txt','w') as f:
+with open('AD2_test_pred_Gaussian.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -195,7 +195,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD2_test_pred_Gaussian.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -208,7 +208,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD2_error_Gaussian.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=2
 # number of features
@@ -267,7 +267,7 @@ print(f'Average test error of regularized Student random feature model with \u03
 print(f'Average clock time is {np.mean(times_reg2):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Student2.txt','w') as f:
+with open('AD2_test_pred_Student2.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -291,7 +291,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD2_test_pred_Student2.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -304,7 +304,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD2_error_Student2.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=3
 # number of features
@@ -363,7 +363,7 @@ print(f'Average test error of regularized Student random feature model with \u03
 print(f'Average clock time is {np.mean(times_reg3):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Student3.txt','w') as f:
+with open('AD2_test_pred_Student3.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -387,7 +387,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD2_test_pred_Student3.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -400,7 +400,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD2_error_Student3.png', bbox_inches = 'tight')
 
 ######################## Recovery Map ######################## 
 
@@ -421,7 +421,7 @@ print('f_hat Testing Input Shape: ' + str(x_test_split.shape))
 print('f_hat Testing Output Shape: ' + str(y_test_split.shape) + '\n')
 
 # Save data to text file
-with open('AD1_data_split.txt','w') as f:
+with open('AD2_data_split.txt','w') as f:
     np.savetxt(f, grid, delimiter=',')
     f.write('\n')
     np.savetxt(f, grid_split, delimiter=',')
@@ -502,7 +502,7 @@ print(f'Average test error of f_hat (Gaussian RFs) & recovery map over {num} tri
 print(f'Average test error of f_hat (regularized Gaussian RFs: \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg1):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Gaussian.txt','w') as f:
+with open('AD2_recovery_Gaussian.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -527,7 +527,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_interpolant_Gaussian.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -540,7 +540,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_error_Gaussian.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=2
 # number of features
@@ -611,7 +611,7 @@ print(f'Average test error of f_hat (Student RFs: \u03BD = {nv1}) & recovery map
 print(f'Average test error of f_hat (regularized Student RFs: \u03BD = {nv1} and \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg2):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Student2.txt','w') as f:
+with open('AD2_recovery_Student2.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -636,7 +636,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_interpolant_Student2.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -649,7 +649,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_error_Student2.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=3
 # number of features
@@ -720,7 +720,7 @@ print(f'Average test error of f_hat (Student RFs: \u03BD = {nv2}) & recovery map
 print(f'Average test error of f_hat (regularized Student RFs: \u03BD = {nv2} and \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg3):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Student3.txt','w') as f:
+with open('AD2_recovery_Student3.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -745,7 +745,7 @@ plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
 plt.yticks([0,1,2], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_interpolant_Student3.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -758,4 +758,4 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD2_recovery_error_Student3.png', bbox_inches = 'tight')

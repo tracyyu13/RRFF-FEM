@@ -3,41 +3,43 @@ import matplotlib.pyplot as plt
 import scipy
 import time
 from scipy import io
-from RF import *
 from matplotlib import cm
+from RF import *
 
 # Write a function to get the training and test samples
 
-def get_data(filename):
-    '''
-    Read data samples from file.
+def get_data(file_name_input, file_name_output, mode="partial"):
+    """
+    Read training and test samples
+    """
     
-    Input:
-    filename.
+    # training and test inputs 
+    X = np.load(file_name_input)
+    X = X.T
+    m = X.shape[0]
+
+    # add relative noise to X
+    noise = np.random.normal(0,1,X.shape)
+    ratio = np.linalg.norm(X, axis=-1)/np.linalg.norm(noise, axis=-1)
+    ratio = ratio[:,np.newaxis]
+    X_noise = X + 0.05*noise*ratio
     
-    Returns:
-    u0: initial condition (training inputs)
-    ut: solution at time t=0.5 (training outputs)
-    xt: location x and time t
-    '''
+    # training and test outputs 
+    Y = np.load(file_name_output)
+    Y = Y.T
+    n = Y.shape[0]
+    noise = np.random.normal(0,1,Y.shape)
+    ratio = np.linalg.norm(X, axis=-1)/np.linalg.norm(noise, axis=-1)
+    ratio = ratio[:,np.newaxis]
+    Y_noise = Y + 0.05*noise*ratio
     
-    # x grid
-    nx = 40
-    # time grid
-    nt = 40
-    # load data
-    data = np.load(filename)
-    # location x, time t, and solution u
-    x = data["x"].astype(np.float64)
-    t = data["t"].astype(np.float64)
-    u = data["u"].astype(np.float64)  # N x nt x nx
+    if mode == "full":
+        
+        return X_noise[0:int(m/2)], Y_noise[0:int(n/2)], X_noise[int(m/2):], Y[int(n/2):]
     
-    # initial condition u0
-    u0 = u[:, 0, :]  # N x nx
-    # location x and time t
-    xt = np.vstack((np.ravel(x), np.ravel(t))).T
-    
-    return u0, u[:, int(nt/2), :], xt
+    else:
+        
+        return X_noise[0: 1000], Y_noise[0:1000], X_noise[1000:2000], Y[1000:2000]
 
 # uses scipy.linalg.solve
 class Cholesky_Regression:
@@ -47,10 +49,9 @@ class Cholesky_Regression:
 
     def predict(self, X):
         return X @ self.coef_
-    
+
 # read training data and test data
-x_train, y_train, xt= get_data("train_AD1.npz")
-x_test, y_test, xt = get_data("test_AD1.npz")
+x_train, y_train, x_test, y_test = get_data("AD3_inputs.npy", "AD3_outputs.npy")
 
 print('Training Input Shape: ' + str(x_train.shape))
 print('Training Output Shape: ' + str(y_train.shape))
@@ -80,7 +81,7 @@ y_train_noise = y_noise[0:y_train.shape[0]]
 print('Added noise to data \n')
 
 # Save data to text file
-with open('AD1_data_noise.txt','w') as f:
+with open('AD3_data_noise.txt','w') as f:
     np.savetxt(f, x_train_noise, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_test_noise, delimiter=',')
@@ -89,7 +90,7 @@ with open('AD1_data_noise.txt','w') as f:
     f.write('\n')
     np.savetxt(f, y_test, delimiter=',')
 
-grid = np.linspace(0,1,40)
+grid = np.linspace(0,1,200)
 grid = grid[:,np.newaxis]
 
 # Visualize one training inputs
@@ -97,21 +98,21 @@ idx = 20
 
 # one example of training input
 plt.figure()
-plt.plot(grid, x_train_noise[idx], color = cm.coolwarm(0.0), linewidth=1.5)
+plt.plot(grid, x_train_noise[idx], color = cm.coolwarm(0.0), linewidth=2)
 plt.xlabel(r'$x$', size=25)
 plt.ylabel(r'$u(x) = v(x,0)$', size=25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1], fontsize=20)
-plt.savefig('AD1_input.png', bbox_inches = 'tight')
+plt.yticks([-1,0,1], fontsize=20)
+plt.savefig('AD3_input.png', bbox_inches = 'tight')
 
 # one example of training output
 plt.figure()
-plt.plot(grid, y_train_noise[idx], color = cm.coolwarm(0.0), linewidth=1.5)
+plt.plot(grid, y_train_noise[idx], color = cm.coolwarm(0.0), linewidth=2)
 plt.xlabel(r'$x$', size=25)
 plt.ylabel(r'$v(x,0.5)$', size=25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1], fontsize=20)
-plt.savefig('AD1_output.png', bbox_inches = 'tight')
+plt.yticks([-1,0,1], fontsize=20)
+plt.savefig('AD3_output.png', bbox_inches = 'tight')
 
 num = 20
 
@@ -119,7 +120,7 @@ num = 20
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 alpha1=1e-10
 
 errors1 = np.zeros((num,))
@@ -145,7 +146,7 @@ for i in range(num):
     times1[i] = end-start
 
     # regularization
-    alpha = 0.01
+    alpha = 0.1
     p=2
     b = np.array([(np.linalg.norm(W[:,i])**p) for i in range(0,W.shape[1])])
     b = alpha*b/np.max(b)
@@ -171,7 +172,7 @@ print(f'Average test error of regularized Gaussian random feature model with \u0
 print(f'Average clock time is {np.mean(times_reg1):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Gaussian.txt','w') as f:
+with open('AD3_test_pred_Gaussian.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -194,8 +195,8 @@ plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Gaussian.png', bbox_inches = 'tight')
+plt.yticks([-1,0,1], fontsize=20)
+plt.savefig('AD3_test_pred_Gaussian.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -208,13 +209,13 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD3_error_Gaussian.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=2
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 nv1 = 2
 alpha1=1e-10
 
@@ -241,7 +242,7 @@ for i in range(num):
     times2[i] = end-start
 
     # regularization
-    alpha = 0.1
+    alpha = 0.5
     p=2
     b = np.array([(np.linalg.norm(W[:,i])**p) for i in range(0,W.shape[1])])
     b = alpha*b/np.max(b)
@@ -267,7 +268,7 @@ print(f'Average test error of regularized Student random feature model with \u03
 print(f'Average clock time is {np.mean(times_reg2):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Student2.txt','w') as f:
+with open('AD3_test_pred_Student2.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -290,8 +291,8 @@ plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Student2.png', bbox_inches = 'tight')
+plt.yticks([-1,0,1], fontsize=20)
+plt.savefig('AD3_test_pred_Student2.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -304,13 +305,13 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD3_error_Student2.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=3
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 nv2 = 3
 alpha1=1e-10
 
@@ -337,7 +338,7 @@ for i in range(num):
     times3[i] = end-start
 
     # regularization
-    alpha = 0.01
+    alpha = 0.1
     p=2
     b = np.array([(np.linalg.norm(W[:,i])**p) for i in range(0,W.shape[1])])
     b = alpha*b/np.max(b)
@@ -363,7 +364,7 @@ print(f'Average test error of regularized Student random feature model with \u03
 print(f'Average clock time is {np.mean(times_reg3):.2f} seconds \n')
 
 # Save data to text file
-with open('AD1_test_pred_Student3.txt','w') as f:
+with open('AD3_test_pred_Student3.txt','w') as f:
     np.savetxt(f, W, delimiter=',')
     f.write('\n')
     np.savetxt(f, x_train_RF, delimiter=',')
@@ -386,8 +387,8 @@ plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.legend(fontsize='x-large',loc="lower left")
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
-plt.savefig('AD1_test_pred_Student3.png', bbox_inches = 'tight')
+plt.yticks([-1,0,1], fontsize=20)
+plt.savefig('AD3_test_pred_Student3.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - test)
 plt.figure()
@@ -400,7 +401,7 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_error_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD3_error_Student3.png', bbox_inches = 'tight')
 
 ######################## Recovery Map ######################## 
 
@@ -421,7 +422,7 @@ print('f_hat Testing Input Shape: ' + str(x_test_split.shape))
 print('f_hat Testing Output Shape: ' + str(y_test_split.shape) + '\n')
 
 # Save data to text file
-with open('AD1_data_split.txt','w') as f:
+with open('AD3_data_split.txt','w') as f:
     np.savetxt(f, grid, delimiter=',')
     f.write('\n')
     np.savetxt(f, grid_split, delimiter=',')
@@ -438,7 +439,7 @@ with open('AD1_data_split.txt','w') as f:
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 alpha1=1e-10
 
 errors1 = np.zeros((num,))
@@ -463,7 +464,7 @@ for i in range(num):
     errors1[i] = e
 
     # regularization
-    alpha = 0.01
+    alpha = 0.1
     p=2
     b = np.array([(np.linalg.norm(W_split[:,i])**p) for i in range(0,W_split.shape[1])])
     b = alpha*b/np.max(b)
@@ -502,7 +503,7 @@ print(f'Average test error of f_hat (Gaussian RFs) & recovery map over {num} tri
 print(f'Average test error of f_hat (regularized Gaussian RFs: \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg1):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Gaussian.txt','w') as f:
+with open('AD3_recovery_Gaussian.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -525,9 +526,9 @@ plt.plot(grid, v_out2[idx],  label = f"RRFF + FEM Prediction: \u03B1 = {alpha}",
 plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
+plt.yticks([-1,0,1], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_interpolant_Gaussian.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -540,13 +541,13 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Gaussian.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_error_Gaussian.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=2
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 nv1 = 2
 alpha1=1e-10
 
@@ -572,7 +573,7 @@ for i in range(num):
     errors2[i] = e
 
     # regularization
-    alpha = 0.1
+    alpha = 0.5
     p=2
     b = np.array([(np.linalg.norm(W_split[:,i])**p) for i in range(0,W_split.shape[1])])
     b = alpha*b/np.max(b)
@@ -611,7 +612,7 @@ print(f'Average test error of f_hat (Student RFs: \u03BD = {nv1}) & recovery map
 print(f'Average test error of f_hat (regularized Student RFs: \u03BD = {nv1} and \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg2):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Student2.txt','w') as f:
+with open('AD3_recovery_Student2.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -634,9 +635,9 @@ plt.plot(grid, v_out2[idx],  label = f"RRFF + FEM Prediction: \u03B1 = {alpha}",
 plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
+plt.yticks([-1,0,1], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_interpolant_Student2.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -649,13 +650,13 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Student2.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_error_Student2.png', bbox_inches = 'tight')
 
 ######################## Student random feature nu=3
 # number of features
 N = 5000
 # scaling parameter gamma
-gamma = 0.02
+gamma = 1e-3
 nv2 = 3
 alpha1=1e-10
 
@@ -681,7 +682,7 @@ for i in range(num):
     errors3[i] = e
 
     # regularization
-    alpha = 0.01
+    alpha = 0.1
     p=2
     b = np.array([(np.linalg.norm(W_split[:,i])**p) for i in range(0,W_split.shape[1])])
     b = alpha*b/np.max(b)
@@ -720,7 +721,7 @@ print(f'Average test error of f_hat (Student RFs: \u03BD = {nv2}) & recovery map
 print(f'Average test error of f_hat (regularized Student RFs: \u03BD = {nv2} and \u03b1 = {alpha}) & recovery map is {np.mean(errors_recovery_reg3):.2e}. \n')
 
 # Save data to text file
-with open('AD1_recovery_Student3.txt','w') as f:
+with open('AD3_recovery_Student3.txt','w') as f:
     np.savetxt(f, W_split, delimiter=',')
     f.write('\n')
     np.savetxt(f, b_split, delimiter=',')
@@ -743,9 +744,9 @@ plt.plot(grid, v_out2[idx],  label = f"RRFF + FEM Prediction: \u03B1 = {alpha}",
 plt.xlabel(r'$x$', size= 25)
 plt.ylabel(r'$v(x,0.5)$', size= 25)
 plt.xticks([0,1], fontsize=20)
-plt.yticks([0,1,2], fontsize=20)
+plt.yticks([-1,0,1], fontsize=20)
 plt.legend(fontsize='x-large',loc="lower left")
-plt.savefig('AD1_recovery_interpolant_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_interpolant_Student3.png', bbox_inches = 'tight')
 
 # Figure 2: pointwise error (Prediction - true)
 plt.figure()
@@ -758,4 +759,4 @@ plt.legend(fontsize='x-large',loc="lower left")
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xticks([0,1], fontsize=20)
 plt.yticks(fontsize=20)
-plt.savefig('AD1_recovery_error_Student3.png', bbox_inches = 'tight')
+plt.savefig('AD3_recovery_error_Student3.png', bbox_inches = 'tight')
