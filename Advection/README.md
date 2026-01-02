@@ -1,0 +1,1 @@
+This folder contains code for Advection equations I, II, and III. The datasets for Advection I and II are from https://github.com/lu-group/deeponet-fno/blob/main/data/advection/README.md, and the dataset for Advection III is from https://data.caltech.edu/records/fp3ds-kej20.
