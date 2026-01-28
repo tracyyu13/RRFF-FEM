@@ -127,8 +127,8 @@ alpha1=1e-10
 
 alphas = np.array([10**-p for p in range(1,11)])
 alphas = np.insert(alphas, 0, np.array([0.5,0.25]))
-errors1 = np.zeros((num,))
-times1 = np.zeros((num,))
+errors1 = np.zeros(num)
+times1 = np.zeros(num)
 errors_reg1 = np.zeros((num,alphas.shape[0]))
 times_reg1 = np.zeros((num,alphas.shape[0]))
 preds_reg1 = []
@@ -313,8 +313,8 @@ gamma = 0.02
 nv1 = 2
 alpha1=1e-10
 
-errors2 = np.zeros((num,))
-times2 = np.zeros((num,))
+errors2 = np.zeros(num)
+times2 = np.zeros(num)
 errors_reg2 = np.zeros((num,alphas.shape[0]))
 times_reg2 = np.zeros((num,alphas.shape[0]))
 preds_reg2 = []
@@ -484,8 +484,8 @@ gamma = 0.02
 nv2 = 3
 alpha1=1e-10
 
-errors3 = np.zeros((num,))
-times3 = np.zeros((num,))
+errors3 = np.zeros(num)
+times3 = np.zeros(num)
 errors_reg3 = np.zeros((num,alphas.shape[0]))
 times_reg3 = np.zeros((num,alphas.shape[0]))
 preds_reg3 = []
@@ -756,10 +756,10 @@ N = 10000
 gamma = 1e-5
 alpha1=1e-10
 
-errors1 = np.zeros((num,))
-errors_reg1 = np.zeros((num,))
-errors_recovery1 = np.zeros((num,))
-errors_recovery_reg1 = np.zeros((num,))
+errors1 = np.zeros(num)
+errors_reg1 = np.zeros(num)
+errors_recovery1 = np.zeros(num)
+errors_recovery_reg1 = np.zeros(num)
 for i in tqdm(range(num)):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_Gaussian(gamma, N, x_train_split, x_test_split)
@@ -952,10 +952,10 @@ gamma = 0.02
 nv1 = 2
 alpha1=1e-10
 
-errors2 = np.zeros((num,))
-errors_reg2 = np.zeros((num,))
-errors_recovery2 = np.zeros((num,))
-errors_recovery_reg2 = np.zeros((num,))
+errors2 = np.zeros(num)
+errors_reg2 = np.zeros(num)
+errors_recovery2 = np.zeros(num)
+errors_recovery_reg2 = np.zeros(num)
 for i in tqdm(range(num)):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_student(nv1, gamma, N, x_train_split, x_test_split)
@@ -1148,10 +1148,10 @@ gamma = 0.02
 nv2 = 3
 alpha1=1e-10
 
-errors3 = np.zeros((num,))
-errors_reg3 = np.zeros((num,))
-errors_recovery3 = np.zeros((num,))
-errors_recovery_reg3 = np.zeros((num,))
+errors3 = np.zeros(num)
+errors_reg3 = np.zeros(num)
+errors_recovery3 = np.zeros(num)
+errors_recovery_reg3 = np.zeros(num)
 for i in tqdm(range(num)):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_student(nv2, gamma, N, x_train_split, x_test_split)
