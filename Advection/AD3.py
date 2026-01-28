@@ -123,10 +123,10 @@ N = 5000
 gamma = 1e-3
 alpha1=1e-10
 
-errors1 = np.zeros((num,))
-times1 = np.zeros((num,))
-errors_reg1 = np.zeros((num,))
-times_reg1 = np.zeros((num,))
+errors1 = np.zeros(num)
+times1 = np.zeros(num)
+errors_reg1 = np.zeros(num)
+times_reg1 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W, random_offset, x_train_RF, x_test_RF = RF_Gaussian(gamma, N, x_train_noise, x_test_noise)
@@ -219,10 +219,10 @@ gamma = 1e-3
 nv1 = 2
 alpha1=1e-10
 
-errors2 = np.zeros((num,))
-times2 = np.zeros((num,))
-errors_reg2 = np.zeros((num,))
-times_reg2 = np.zeros((num,))
+errors2 = np.zeros(num)
+times2 = np.zeros(num)
+errors_reg2 = np.zeros(num)
+times_reg2 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W, random_offset, x_train_RF, x_test_RF = RF_student(nv1, gamma, N, x_train_noise, x_test_noise)
@@ -315,10 +315,10 @@ gamma = 1e-3
 nv2 = 3
 alpha1=1e-10
 
-errors3 = np.zeros((num,))
-times3 = np.zeros((num,))
-errors_reg3 = np.zeros((num,))
-times_reg3 = np.zeros((num,))
+errors3 = np.zeros(num)
+times3 = np.zeros(num)
+errors_reg3 = np.zeros(num)
+times_reg3 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W, random_offset, x_train_RF, x_test_RF = RF_student(nv2, gamma, N, x_train_noise, x_test_noise)
@@ -442,10 +442,10 @@ N = 5000
 gamma = 1e-3
 alpha1=1e-10
 
-errors1 = np.zeros((num,))
-errors_reg1 = np.zeros((num,))
-errors_recovery1 = np.zeros((num,))
-errors_recovery_reg1 = np.zeros((num,))
+errors1 = np.zeros(num)
+errors_reg1 = np.zeros(num)
+errors_recovery1 = np.zeros(num)
+errors_recovery_reg1 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_Gaussian(gamma, N, x_train_split, x_test_split)
@@ -551,10 +551,10 @@ gamma = 1e-3
 nv1 = 2
 alpha1=1e-10
 
-errors2 = np.zeros((num,))
-errors_reg2 = np.zeros((num,))
-errors_recovery2 = np.zeros((num,))
-errors_recovery_reg2 = np.zeros((num,))
+errors2 = np.zeros(num)
+errors_reg2 = np.zeros(num)
+errors_recovery2 = np.zeros(num)
+errors_recovery_reg2 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_student(nv1, gamma, N, x_train_split, x_test_split)
@@ -660,10 +660,10 @@ gamma = 1e-3
 nv2 = 3
 alpha1=1e-10
 
-errors3 = np.zeros((num,))
-errors_reg3 = np.zeros((num,))
-errors_recovery3 = np.zeros((num,))
-errors_recovery_reg3 = np.zeros((num,))
+errors3 = np.zeros(num)
+errors_reg3 = np.zeros(num)
+errors_recovery3 = np.zeros(num)
+errors_recovery_reg3 = np.zeros(num)
 for i in range(num):
     # generate random feature matrix
     W_split, b_split, x_train_split_RF, x_test_split_RF = RF_student(nv2, gamma, N, x_train_split, x_test_split)
