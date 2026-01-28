@@ -22,11 +22,12 @@ def RF_Gaussian(gamma, N, x_train, x_test):
     """
     # number of samples and dimension of features
     m,d = x_train.shape
+    rng = np.random.default_rng()
     # random features
-    Omega = (2.0 * gamma) ** 0.5*np.random.normal(size = (d,N))
+    Omega = (2.0 * gamma) ** 0.5*rng.normal(size = (d,N))
     
     # Random feature matrix A
-    random_offset = np.random.uniform(0, 2 * np.pi, size=(1,N))
+    random_offset = rng.uniform(0, 2 * np.pi, size=(1,N))
     A_train = np.cos(x_train@Omega + random_offset)
     A_test = np.cos(x_test@Omega + random_offset)
     
@@ -34,9 +35,9 @@ def RF_Gaussian(gamma, N, x_train, x_test):
 
 
 def student(nu, sigma, size):
-    
-    gaussian = np.random.normal(loc=0, scale=sigma, size=size)
-    chisquare = np.random.chisquare(nu, size=(1,size[1]))
+    rng = np.random.default_rng()
+    gaussian = rng.normal(loc=0, scale=sigma, size=size)
+    chisquare = rng.chisquare(nu, size=(1,size[1]))
     
     return np.sqrt(nu/chisquare)*gaussian
 
@@ -58,10 +59,11 @@ def RF_student(nu, gamma, N, x_train, x_test):
     """
     # number of samples and dimension of features
     m,d = x_train.shape
+    rng = np.random.default_rng()
     # random features generated from Cauchy distribution with scaling parameter gamma
     Omega = student(nu,gamma,size=(d,N))
     # Random feature matrix A
-    random_offset = np.random.uniform(0, 2 * np.pi, size=(1,N))
+    random_offset = rng.uniform(0, 2 * np.pi, size=(1,N))
     A_train = np.cos(x_train@Omega + random_offset)
     
     A_test = np.cos(x_test@Omega + random_offset)
